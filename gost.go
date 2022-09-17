@@ -44,18 +44,21 @@ func (s *Store) Put(ctx context.Context, uid string, key string, data any) (err 
 func (s *Store) GetAll(ctx context.Context, uid string) (data map[string]any, err error) {
 	obj, err := s.client.GetObject(ctx, s.bucket, name(uid), minio.GetObjectOptions{})
 	if err != nil {
-		data = make(map[string]any)
-		log.Println("Data doesn't exist:", err)
+		log.Println("Cannot get object:", err)
 		return
 	}
 	defer obj.Close()
 	_, err = obj.Stat()
 	if err != nil {
-		data = make(map[string]any)
-		log.Println("Object doesn't exist:", err, obj)
+		// No such key here means this is the data doesn't exist, returns an empty map
+		if err.(minio.ErrorResponse).Code == "NoSuchKey" {
+			data = make(map[string]any)
+			err = nil
+		} else {
+			log.Printf("Object doesn't exist:\n %#v, %v\n", obj, err)
+		}
 		return
 	}
-
 	decoder := gob.NewDecoder(obj)
 	err = decoder.Decode(&data)
 	if err != nil {

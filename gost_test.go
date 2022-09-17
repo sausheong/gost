@@ -58,6 +58,9 @@ func setup() {
 func TestPutBasic(t *testing.T) {
 	setup()
 	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	err = store.Put(context.Background(), "sausheong", "123", "hello world!")
 	if err != nil {
 		t.Errorf("Failed to store: %v", err)
@@ -84,7 +87,9 @@ func TestPut(t *testing.T) {
 	}
 	Register(thingy)
 	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
-
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	err = store.Put(context.Background(), "sausheong", "Bob", thingy)
 	if err != nil {
 		t.Errorf("Failed to store: %v", err)

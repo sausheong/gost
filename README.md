@@ -235,7 +235,7 @@ Gost is a lot more useful for non-tabular data where you have Go representations
 
 ## Install Minio
 
-Minio is an S3-compatible object storage you can install on your computer. 
+Minio is an S3-compatible object storage you can install on your computer. You can install Minio locally and use it for your development purposes. However you should remember that whatever works on your machine doesn't necessarily works the same way on the cloud storage services, so do test the results properly.
 
 ### Windows
 
