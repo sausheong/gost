@@ -33,8 +33,6 @@ func TestLoad(t *testing.T) {
 	if len(data) < 0 {
 		t.Errorf("Failed to get the right number of data")
 	}
-	t.Logf("%#v", data)
-
 }
 
 func TestBackupAndRestore(t *testing.T) {

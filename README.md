@@ -40,7 +40,9 @@ if err != nil {
 
 Let's take a look at the few variable. The `key` is the access key in any one of the object cloud storages. Similarly the `secret` is the secrey key. They will typically come in a pair and you will need to generate them as they are used as credentials to access the cloud storage.
 
-The `endpoint` is the URL used to access the cloud storage (or local storage) and `useSSL` is a boolean that indicates if it uses `http` or `https`. The endpoint for Amazon S3 for example is `s3.amazonaws.com` while for Google Cloud Storage it's `storage.googleapis.com`.
+The `endpoint` is the URL used to access the cloud storage (or local storage) and `useSSL` is a boolean that indicates if it uses `http` or `https`. The endpoint for Amazon S3 for example is `s3.amazonaws.com` while for Google Cloud Storage it's `storage.googleapis.com`. 
+
+The next parameter is the region for which the cloud storage should be hosted. If this is not provided (i.e. an empty string), the default is `us-east-1`. This follows the S3 convention (look here -- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). In most cases this will match, provided your provider has the same region, though there could be some minor differences. If you're using Google Cloud Storage, you should check out here -- https://cloud.google.com/storage/docs/locations. Depending on where you are or where your server is, you should try to use the nearest provider, for optimal performance.
 
 The last parameter in creating a new store is the `bucket` which is the bucket you want to use to store the data. You can create it in the console or CLI of the cloud storage service you're using, or if you didn't and you specify it here, Gost will create it for you.
 

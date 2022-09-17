@@ -166,7 +166,7 @@ func TestPutImageFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to read test.png: %v", err)
 	}
-
+	Register(Thingy{})
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	err = store.Put(context.Background(), "sausheong", "test.png", imageBytes)
 	if err != nil {
@@ -176,7 +176,7 @@ func TestPutImageFile(t *testing.T) {
 
 func TestGetImageFile(t *testing.T) {
 	setup()
-
+	Register(Thingy{})
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	image, err := store.Get(context.Background(), "sausheong", "test.png")
 	if err != nil {
