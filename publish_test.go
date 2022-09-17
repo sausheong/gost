@@ -9,7 +9,7 @@ import (
 
 func TestPublish(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to create store: %v", err)
 	}
@@ -26,7 +26,7 @@ func TestPublish(t *testing.T) {
 
 func TestUnpublish(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to create store: %v", err)
 	}
@@ -39,7 +39,7 @@ func TestUnpublish(t *testing.T) {
 
 func TestDenyPublic(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to create store: %v", err)
 	}
@@ -51,7 +51,7 @@ func TestDenyPublic(t *testing.T) {
 
 func TestAllowPublic(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to create store: %v", err)
 	}
@@ -62,7 +62,7 @@ func TestAllowPublic(t *testing.T) {
 }
 func TestCheckPublic(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to create store: %v", err)
 	}

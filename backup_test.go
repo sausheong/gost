@@ -7,7 +7,7 @@ import (
 
 func TestBackup(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to create store: %v", err)
 	}
@@ -21,7 +21,7 @@ func TestBackup(t *testing.T) {
 
 func TestLoad(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to create store: %v", err)
 	}
@@ -39,7 +39,7 @@ func TestLoad(t *testing.T) {
 
 func TestBackupAndRestore(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to create store: %v", err)
 	}

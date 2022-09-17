@@ -37,7 +37,7 @@ type OtherThingy struct {
 	Number int
 }
 
-var key, secret, endpoint, bucket string
+var key, secret, endpoint, region, bucket string
 var useSSL bool
 
 func setup() {
@@ -52,12 +52,13 @@ func setup() {
 	if err != nil {
 		log.Fatalf("Failed to parse USE_SSL: %v", err)
 	}
+	region = os.Getenv("REGION")
 	bucket = os.Getenv("BUCKET")
 }
 
 func TestPutBasic(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to initialise a store: %v", err)
 	}
@@ -86,7 +87,7 @@ func TestPut(t *testing.T) {
 		},
 	}
 	Register(thingy)
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	if err != nil {
 		t.Errorf("Failed to initialise a store: %v", err)
 	}
@@ -98,7 +99,7 @@ func TestPut(t *testing.T) {
 
 func TestGetBasic(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	thing, err := store.Get(context.Background(), "sausheong", "123")
 	if err != nil {
 		t.Errorf("Failed to get: %v", err)
@@ -111,7 +112,7 @@ func TestGetBasic(t *testing.T) {
 func TestGet(t *testing.T) {
 	setup()
 	Register(Thingy{})
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	thing, err := store.Get(context.Background(), "sausheong", "Bob")
 	if err != nil {
 		t.Errorf("Failed to get: %v", err)
@@ -124,7 +125,7 @@ func TestGet(t *testing.T) {
 func TestGetAll(t *testing.T) {
 	setup()
 	Register(Thingy{})
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	all, err := store.GetAll(context.Background(), "sausheong")
 	if err != nil {
 		t.Errorf("Failed to get: %v", err)
@@ -143,7 +144,7 @@ func TestGetAll(t *testing.T) {
 func TestDelete(t *testing.T) {
 	setup()
 	Register(Thingy{})
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	err = store.Delete(context.Background(), "sausheong", "123")
 	if err != nil {
 		t.Errorf("Failed to delete: %v", err)
@@ -152,7 +153,7 @@ func TestDelete(t *testing.T) {
 
 func TestDeleteAll(t *testing.T) {
 	setup()
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	err = store.DeleteAll(context.Background(), "sausheong")
 	if err != nil {
 		t.Errorf("Failed to delete all: %v", err)
@@ -166,7 +167,7 @@ func TestPutImageFile(t *testing.T) {
 		t.Errorf("Failed to read test.png: %v", err)
 	}
 
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	err = store.Put(context.Background(), "sausheong", "test.png", imageBytes)
 	if err != nil {
 		t.Errorf("Failed to store: %v", err)
@@ -176,7 +177,7 @@ func TestPutImageFile(t *testing.T) {
 func TestGetImageFile(t *testing.T) {
 	setup()
 
-	store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
 	image, err := store.Get(context.Background(), "sausheong", "test.png")
 	if err != nil {
 		t.Errorf("Failed to get: %v", err)

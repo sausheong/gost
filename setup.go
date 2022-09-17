@@ -16,14 +16,18 @@ type Store struct {
 }
 
 // Create a new store
-func NewStore(key string, secret string, endpoint string, useSSL bool, bucket string) (s *Store, err error) {
+func NewStore(key string, secret string, endpoint string, useSSL bool, region string, bucket string) (s *Store, err error) {
 	s = &Store{
 		bucket: bucket,
+	}
+	if region == "" {
+		region = "us-east-1"
 	}
 	ctx := context.Background()
 	s.client, err = minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(key, secret, ""),
 		Secure: useSSL,
+		Region: region,
 	})
 	if err != nil {
 		log.Fatalln("Cannot initiate client:", err)
@@ -35,7 +39,7 @@ func NewStore(key string, secret string, endpoint string, useSSL bool, bucket st
 	}
 	if !exists {
 		// Make gost bucket
-		err = s.client.MakeBucket(ctx, bucket, minio.MakeBucketOptions{})
+		err = s.client.MakeBucket(ctx, bucket, minio.MakeBucketOptions{Region: region})
 		if err != nil {
 			log.Fatalln("Gost bucket doesn't exist but we can't make the bucket either:", err)
 		}

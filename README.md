@@ -32,7 +32,7 @@ Let's take a closer look at how we to use Gost.
 Everything in Gost centers around a `Store`. You will use a store to everything else in Gost, so the first thing to do is to create one.
 
 ````go
-store, err := NewStore(key, secret, endpoint, useSSL, bucket)
+store, err := NewStore(key, secret, endpoint, useSSL, "". bucket)
 if err != nil {
     // resolve error
 }
@@ -224,6 +224,26 @@ err = store.Restore(ctx, "sausheong")
 ## Encryption
 
 // TODO
+
+## Cloud Storage Services
+
+Here are the specific configurations and gotchas for the different cloud storage services.
+
+### DigitalOcean Spaces
+
+// TODO
+
+### Amazon S3
+
+
+### Google Cloud Storage
+
+
+### Azure Blob Storage
+
+
+### Linode Cloud Storage
+
 
 ## When to use and when NOT to use Gost
 
