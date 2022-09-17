@@ -1,6 +1,6 @@
-# Gost - Native Go database on Cloud Object Storages
+# Gost - Native Go data store on Cloud Object Storages
 
-Gost is a native Go database for storing data in S3 compatible object stores. 
+Gost is a native Go data store for storing data in S3 compatible object stores. 
 
 ## Object storages
 
