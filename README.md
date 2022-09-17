@@ -1,12 +1,14 @@
-# Gost - Native Go data store on Cloud Object Storages
+# Gost 
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/sausheong/gost.svg)](https://pkg.go.dev/github.com/sausheong/gost)
 
 Gost is a native Go data store for storing data in S3 compatible object stores. 
 
 ## Object storages
 
-Object storage is a popular form of data storage where data is managed as objects as compared with other storage architectures. Object storage is very popularly used for cloud storage. The most popular service today is Amazon Simple Storage Service (S3) and it has more or less become the defacto standard for cloud object storage services. Other object cloud storage services include Google Cloud Storage, Azure Blob Storage, DigitalOcean Spaces, Oracle Cloud Object Storage, Linode Object Storage and so on. There are also open source object storage software that you can install on your own machines including OpenStack Swift, Minio, Zenko CloudServer, OpenIO and many others. Interesting all of them are more or less S3 compatible, which shows the great strength of S3 as a service.
+Object storage is a popular form of data storage where data is managed as objects as compared with other storage architectures. Object storage is very popularly used for cloud storage. The most popular service today is Amazon Simple Storage Service (S3) and it has more or less become the defacto standard for cloud object storage services. Other object cloud storage services include Google Cloud Storage, Azure Blob Storage, DigitalOcean Spaces, Oracle Cloud Object Storage, Linode Object Storage and so on. There are also open source object storage software that you can install on your own machines including OpenStack Swift, Minio, Zenko CloudServer, OpenIO and many others. Interesting all of them are more or less S3 compatible, which shows the dominance S3 has over the other services.
 
-## Gost
+## What is Gost
 
 Gost is short for Go Storage.
 
@@ -38,17 +40,19 @@ if err != nil {
 }
 ````
 
-Let's take a look at the few variable. The `key` is the access key in any one of the object cloud storages. Similarly the `secret` is the secrey key. They will typically come in a pair and you will need to generate them as they are used as credentials to access the cloud storage.
+Let's take a look at the parameters for initialising a `Store` . The `key` is the access key in any one of the object cloud storages. Similarly the `secret` is the secrey key. They will typically come in a pair and you will need to generate them as they are used as credentials to access the cloud storage.
 
-The `endpoint` is the URL used to access the cloud storage (or local storage) and `useSSL` is a boolean that indicates if it uses `http` or `https`. The endpoint for Amazon S3 for example is `s3.amazonaws.com` while for Google Cloud Storage it's `storage.googleapis.com`. 
+The `endpoint` is the URL used to access the cloud storage (or local storage) and `useSSL` is a boolean that indicates if it uses `http` or `https`. The endpoint for Amazon S3 for example is `s3.amazonaws.com` while for Google Cloud Storage it's `storage.googleapis.com`. For DigitalOcean Spaces it's a bit different, they allow you to set up the location upfront and it's in the endpoint itself. For example, in Singapore I use the `sgp1.digitaloceanspaces.com` endpoint.
 
-The next parameter is the region for which the cloud storage should be hosted. If this is not provided (i.e. an empty string), the default is `us-east-1`. This follows the S3 convention (look here -- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). In most cases this will match, provided your provider has the same region, though there could be some minor differences. If you're using Google Cloud Storage, you should check out here -- https://cloud.google.com/storage/docs/locations. Depending on where you are or where your server is, you should try to use the nearest provider, for optimal performance.
+The next parameter is the region for which the cloud storage should be hosted. If this is not provided (i.e. an empty string), the default is `us-east-1`. This follows the S3 convention (find the other regions here -- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html). In most cases this will match, provided your provider has the same region, though there could be some minor differences. If you're using Google Cloud Storage, you should check out here -- https://cloud.google.com/storage/docs/locations. Depending on where you are or where your server is, you should try to use the nearest provider, for optimal performance.
 
 The last parameter in creating a new store is the `bucket` which is the bucket you want to use to store the data. You can create it in the console or CLI of the cloud storage service you're using, or if you didn't and you specify it here, Gost will create it for you.
 
+Note that if you are using Amazon S3, if you delete your bucket, you have to wait a while before you can create a bucket with the same name.
+
 ### Putting data
 
-With the store, we can start putting data in. Here's a simple example.
+With the `store` initialized, we can start putting data in. Here's a simple example.
 
 ````go
 err := store.Put(ctx, "sausheong", "123", "hello world!")
@@ -254,6 +258,19 @@ Gost can be powerful because you can use cloud storage services as your data sto
 Gost is great for storing smaller pieces of information for a specific user when he or she logs in. When the data becomes too large, Gost is inefficient because it needs to load up all the data in memory for use. Also if you are saving the data often, this means a large amount of data could be traveling back and forth from the cloud storage service, which can be slow and definitely not a good thing. With smaller pieces of data this is a lot easier. This doesn't mean you can't use Gost for bigger sets of data, you just need to split it up properly. 
 
 Gost is a lot more useful for non-tabular data where you have Go representations of the data in structs. This is because you can put and get the structs directly! In fact you don't even need to use structs if you can structure your data with the basic maps and slices.
+
+## Some other tips on using Gost
+
+Gost is pretty new, I extracted it from a project I was working on, into a library because I thought it was interesting enough for it to stand alone. This means it's still a work in progress and you shouldn't be surprised if some things don't work out the way it's supposed to.
+
+I tested it mostly with DigitalOcean Spaces, because it has the simplest and easiest console, and also because my other project was hosted there as well. I've tested it on Amazon S3, it works nicely and Google Cloud Storage as well. However Google Cloud Storage doesn't work too well with publishing at the moment, you will need to manually (on the console) set the bucket for public if you want to use it that way.
+
+Gost is not encrypted (yet -- that's a todo). It's serialised in binary but the data is easily exposed if someone gets hold of it. However it's also managed through a cloud storage service so unless you accidentally expose it, you shouldn't need to worry about it.
+
+Performance of Gost improves the nearer it is to the region (obviously). The region setting is important, don't forget that.
+
+Each Gost data file shouldn't be more than 100MB in general, at tops. I tested putting a 100MB data into an empty map, it took 5.8s. Putting another 100MB of data into a map that already has 100MB took 24.3s. Subsequent smaller puts took 17 - 18s. Your mileage might differ. I was interfacing with my laptop running on home broadband going to an S3 endpoint in Singapore. If you do the same from server to server in the same region, things might be quite different. However at the end of the day, lobbing large files back and forth isn't a great idea, so you should keep your files relatively small for best performance.
+
 
 ## Install Minio
 

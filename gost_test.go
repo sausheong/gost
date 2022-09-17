@@ -190,3 +190,18 @@ func TestGetImageFile(t *testing.T) {
 	}
 
 }
+
+func TestLargeFile(t *testing.T) {
+	setup()
+	Register(Thingy{})
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+
+	// dataBytes, err := os.ReadFile("100MB.bin")
+	// if err != nil {
+	// 	t.Errorf("Failed to read big file: %v", err)
+	// }
+	err = store.Put(context.Background(), "large-2", "big-file-2", "123")
+	if err != nil {
+		t.Errorf("Failed to store: %v", err)
+	}
+}
