@@ -49,10 +49,10 @@ The last parameter in creating a new store is the `bucket` which is the bucket y
 With the store, we can start putting data in. Here's a simple example.
 
 ````go
-err := store.Put(context.Background(), "sausheong", "123", "hello world!")
+err := store.Put(ctx, "sausheong", "123", "hello world!")
 ````
 
-I'm using the background context for simplicity, in your code you should be using `context` for signalling cancellation, timeout, deadlines etc. The parameter `sausheong` is the user ID for the user, for example it could be his email. The parameter `123` the key, used to reference the data, which is `hello world!`. 
+The first parameter is the context. You should be using the context for signalling cancellation, timeout, deadlines etc. The parameter `sausheong` is the user ID for the user, for example it could be his email. The parameter `123` the key, used to reference the data, which is `hello world!`. 
 
 ````go
 thingy := Thingy{
@@ -118,13 +118,13 @@ hello := all["123"].(string) // "hello world!"
 Deleting data is quite straightforward, as you might have expected.
 
 ````go
-err = store.Delete(context.Background(), "sausheong", "123")
+err = store.Delete(ctx, "sausheong", "123")
 ````
 
 You can also delete all the data for a given ID. 
 
 ````go
-err = store.DeleteAll(context.Background(), "sausheong")
+err = store.DeleteAll(ctx, "sausheong")
 ````
 
 You might wonder why Gost doesn't have anything for updating the data. It's not really necessary because you simply write something else with the same key.
