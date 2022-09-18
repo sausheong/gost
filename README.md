@@ -8,7 +8,11 @@ In Go we use a lot of structs when we want to do stuff with data. And then when 
 
 What if we skip the extra marshalling and unmarshalling step? Just take the struct or string or whichever data type and save it. Then when you need the struct again, just get it back as a struct. No more messing around with marshalling and unmarshalling, converting between different data representations or data types. No more struct tags. Everything's in Go. That's what Gost is about.
 
-![Gophers All the Way](MovingGopher.png | width=400)
+<p align="center">
+  <img width="200" src="MovingGopher.png" alt="Gopher image from https://github.com/ashleymcnamara/gophers">
+  </br>
+  <small><a href="https://github.com/ashleymcnamara/gophers">Gopher image from Ashley McNanamara</a></small> 
+</p>
 
 Gost is ideal to be used for storing user data. This could be preferences, lists of data the user owns, or anything at all. When a user logs in, he or she can only view his or her own data in a file. Within the file, the keys can be used for different purposes. It could be a map of different kinds of data. The values can be single pieces of data like a string or an int, or it can be a list of data (or a multi-dimensional list of data). It can even be a map. And of course it can any other data structure as well. For example, if you are using a tree in your Go application, you can simply store the entire tree into Gost and get it back as a tree! There is no need to deconstruct and rebuild a tree from a relational database. What more, each user can store different types of data as well, Gost doesn't force any sort of structure at all.
 
