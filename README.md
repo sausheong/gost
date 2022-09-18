@@ -2,11 +2,11 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/sausheong/gost.svg)](https://pkg.go.dev/github.com/sausheong/gost)
 
-Gost is short for Go Store. It is a native Go data store for storing data in S3 compatible object stores. 
+Gost is short for Go Store. It is a native Go data store for storing data in S3 compatible object storage services. 
 
-In Go we use a lot of structs when we want to do stuff with data. And then when we need to store the data into something more permanent, we break it down into relational database tables or into JSON to store it. When we need it back, we load it back into structs and use it. The data structures we use in our applications are deconstructed and rebuilt each time we save or retrieve from the database.
+In Go we use a lot of structs when we want to do stuff with data. And then when we need to store the data into something more permanent, we break it down into relational database tables or into JSON to store it. When we need it again, we load it from wherever it's stored  back into structs. The data structures we use in our applications are deconstructed and rebuilt each time we save or retrieve from the database.
 
-What if we skip the extra marshalling and unmarshalling step? Just take the struct or string or whichever data type and save it. Go has a mechanism for this -- it's called gob. It's a binary serialization package used to create streams of binary data that can be used in RPCs. It can also be used to encode structs and any Go data types into a binary, self-describing form. Gob works for everything except channels and functions. 
+What if we skip the extra marshalling and unmarshalling step? Just take the struct or string or whichever data type and save it. Then when you need the struct again, just get it back as a struct. No more messing around with marshalling and unmarshalling, converting between different data representations or data types. No more struct tags. Everything's in Go. That's what Gost is about.
 
 Gost is ideal to be used for storing user data. This could be preferences, lists of data the user owns, or anything at all. When a user logs in, he or she can only view his or her own data in a file. Within the file, the keys can be used for different purposes. It could be a map of different kinds of data. The values can be single pieces of data like a string or an int, or it can be a list of data (or a multi-dimensional list of data). It can even be a map. And of course it can any other data structure as well. For example, if you are using a tree in your Go application, you can simply store the entire tree into Gost and get it back as a tree! There is no need to deconstruct and rebuild a tree from a relational database. What more, each user can store different types of data as well, Gost doesn't force any sort of structure at all.
 
