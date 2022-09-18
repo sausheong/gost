@@ -2,32 +2,22 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/sausheong/gost.svg)](https://pkg.go.dev/github.com/sausheong/gost)
 
-Gost is a native Go data store for storing data in S3 compatible object stores. 
+Gost is short for Go Store. It is a native Go data store for storing data in S3 compatible object stores. 
 
-## Object storages
+In Go we use a lot of structs when we want to do stuff with data. And then when we need to store the data into something more permanent, we break it down into relational database tables or into JSON to store it. When we need it back, we load it back into structs and use it. The data structures we use in our applications are deconstructed and rebuilt each time we save or retrieve from the database.
 
-Object storage is a popular form of data storage where data is managed as objects as compared with other storage architectures. Object storage is very popularly used for cloud storage. The most popular service today is Amazon Simple Storage Service (S3) and it has more or less become the defacto standard for cloud object storage services. Other object cloud storage services include Google Cloud Storage, Azure Blob Storage, DigitalOcean Spaces, Oracle Cloud Object Storage, Linode Object Storage and so on. There are also open source object storage software that you can install on your own machines including OpenStack Swift, Minio, Zenko CloudServer, OpenIO and many others. Interesting all of them are more or less S3 compatible, which shows the dominance S3 has over the other services.
+What if we skip the extra marshalling and unmarshalling step? Just take the struct or string or whichever data type and save it. Go has a mechanism for this -- it's called gob. It's a binary serialization package used to create streams of binary data that can be used in RPCs. It can also be used to encode structs and any Go data types into a binary, self-describing form. Gob works for everything except channels and functions. 
 
-## What is Gost
+Gost is ideal to be used for storing user data. This could be preferences, lists of data the user owns, or anything at all. When a user logs in, he or she can only view his or her own data in a file. Within the file, the keys can be used for different purposes. It could be a map of different kinds of data. The values can be single pieces of data like a string or an int, or it can be a list of data (or a multi-dimensional list of data). It can even be a map. And of course it can any other data structure as well. For example, if you are using a tree in your Go application, you can simply store the entire tree into Gost and get it back as a tree! There is no need to deconstruct and rebuild a tree from a relational database. What more, each user can store different types of data as well, Gost doesn't force any sort of structure at all.
 
-Gost is short for Go Storage.
+Also, because Gost can store byte arrays it can store images, video, and all sorts of documents as well. Gost can also store documents separately from the data gob and they can be 'published' for public consumption through the cloud storage. For example, you can take and publish images that are publicly available. Gost can also do backups and restores on an individual file basis.
 
-It's an interesting take for storing data for Go applications. In Go we use a lot of structs when we want to do stuff with data. And then when we need to store the data into something more permanent, we break it down into JSON, into relational database tables and so on, and store it. When we need it back, we load it back into structs and use it.
-
-What if we skip the extra marshalling and unmarshalling step? Just take the struct and save it. Go has a mechanism for it -- it's called gob. It's a binary serialization package used to create streams of binary data that can be used in RPCs. It can also be used to scrunch structs and any Go data types into a binary, self-describing form. Gob works for everything except channels and functions. 
-
-In Gost, I take whatever Go data type you have, and I stuff them into a map with a string key and value of any data type (I literally use `any`). Then I take a unique ID formed by doing a base64 of an ID value you pass in (for example, an email address) and that becomes the filename of the gob file. That gob file, which was originally stored in the filesystem, is now in an object store of your choice, under the `data` directory.
-
-Why is it done this way? Gost is ideal to be used for storing user data. This could be preferences, lists of data the user owns, or anything at all. When a user logs in, he or she can only view his or her own data in this file. Within the file, the keys can be used for different purposes. It could be a map of different kinds of data. The values can be single pieces of data like a string or an int, or it can be a list of data (or a multi-dimensional list of data). It can even be a map. And of course it can a list of structs etc as well. What more, each user can store different types of data as well, there isn't really a need for all data to be the same. 
-
-With this, you can imagine that because it can store byte arrays it can store images, video, and all sorts of documents as well. One of the interesting things about using cloud object storage services, Gost can store documents separately from the data gob and they can be 'published' for public consumption. For example, you can take and publish images that are publicly available. We'll take a second look at this later.
-
-Gost is terrible if you want to use it to do analytics on the user data because the data is essentially unstructured. But you normally wouldn't want to do analytics on transaction data anyway, you would want to suck them all up and then throw it into another data store for better analysis.
-
-Let's take a closer look at how we to use Gost.
+Let's take a closer look at how to use Gost. 
 
 
 ## Using Gost
+
+This section assumes that you already know how to use cloud object stores like Amazon S3, Google Cloud Storage, DigitalOcean Spaces etc. You also know the concepts of access and secret keys as credentials, and the concepts of using storage files into buckets in the object stores.
 
 ### Creating a store
 
@@ -58,7 +48,9 @@ With the `store` initialized, we can start putting data in. Here's a simple exam
 err := store.Put(ctx, "sausheong", "123", "hello world!")
 ````
 
-The first parameter is the context. You should be using the context for signalling cancellation, timeout, deadlines etc. The parameter `sausheong` is the user ID for the user, for example it could be his email. The parameter `123` the key, used to reference the data, which is `hello world!`. 
+The first parameter is the context. You should be using the context for signalling cancellation, timeout, deadlines etc. The parameter `sausheong` is a unique ID, for example it could be the email for a user. The parameter `123` the key, used to reference the data, which is `hello world!`. 
+
+You can put anything in Go, except for channels and functions. Let's take a look at a struct.
 
 ````go
 thingy := Thingy{
@@ -87,7 +79,7 @@ As you see in the code above, you can actually just stuff a nested struct into G
 Register(thingy)
 ````
 
-When you register you can register the actual data you want to store, but Gost only really wants to know the struct, so you can just do this.
+You can register the actual data you want to store, but Gost only really wants to know the struct, so you can just do this.
 
 ````go
 Register(Thingy{})
@@ -241,25 +233,27 @@ Here are the specific configurations and gotchas for the different cloud storage
 
 ### Amazon S3
 
+// TODO
 
 ### Google Cloud Storage
 
+// TODO
 
 ### Azure Blob Storage
 
+// TODO
 
 ### Linode Cloud Storage
 
+// TODO
 
-## When to use and when NOT to use Gost
+## Some other tips on using Gost
 
-Gost can be powerful because you can use cloud storage services as your data store and you can access them easily. It's also great to store files that are going to be published to the Internet, because the files are going to be served through the cloud storage services, not by you. The benefits of that are huge -- you can now use very cheap storage that can be managed and secured by someone else. You can also distribute storage not only within the cloud storage provider by using data center regions, but also between multiple cloud storage providers. This makes Gost truly distributed -- 
+Gost can be powerful because you can use cloud storage services as your data store and you can access them easily. It's also great to store files that are going to be published to the Internet, because the files are going to be served through the cloud storage services, not by you. The benefits of that are huge -- you can now use very cheap storage that can be managed and secured by someone else. You can also distribute storage not only within the cloud storage provider by using data center regions, but also between multiple cloud storage providers. This makes Gost truly distributed.
 
 Gost is great for storing smaller pieces of information for a specific user when he or she logs in. When the data becomes too large, Gost is inefficient because it needs to load up all the data in memory for use. Also if you are saving the data often, this means a large amount of data could be traveling back and forth from the cloud storage service, which can be slow and definitely not a good thing. With smaller pieces of data this is a lot easier. This doesn't mean you can't use Gost for bigger sets of data, you just need to split it up properly. 
 
 Gost is a lot more useful for non-tabular data where you have Go representations of the data in structs. This is because you can put and get the structs directly! In fact you don't even need to use structs if you can structure your data with the basic maps and slices.
-
-## Some other tips on using Gost
 
 Gost is pretty new, I extracted it from a project I was working on, into a library because I thought it was interesting enough for it to stand alone. This means it's still a work in progress and you shouldn't be surprised if some things don't work out the way it's supposed to.
 
