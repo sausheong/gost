@@ -100,6 +100,9 @@ func TestPut(t *testing.T) {
 func TestGetBasic(t *testing.T) {
 	setup()
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	thing, err := store.Get(context.Background(), "sausheong", "123")
 	if err != nil {
 		t.Errorf("Failed to get: %v", err)
@@ -113,6 +116,9 @@ func TestGet(t *testing.T) {
 	setup()
 	Register(Thingy{})
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	thing, err := store.Get(context.Background(), "sausheong", "Bob")
 	if err != nil {
 		t.Errorf("Failed to get: %v", err)
@@ -126,12 +132,12 @@ func TestGetAll(t *testing.T) {
 	setup()
 	Register(Thingy{})
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	all, err := store.GetAll(context.Background(), "sausheong")
 	if err != nil {
 		t.Errorf("Failed to get: %v", err)
-	}
-	if len(all) < 0 {
-		t.Errorf("Failed to get the right number of thingies")
 	}
 	if all["Bob"].(Thingy).Name != "Bob" {
 		t.Errorf("Failed to get the right thingy")
@@ -145,6 +151,9 @@ func TestDelete(t *testing.T) {
 	setup()
 	Register(Thingy{})
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	err = store.Delete(context.Background(), "sausheong", "123")
 	if err != nil {
 		t.Errorf("Failed to delete: %v", err)
@@ -154,6 +163,9 @@ func TestDelete(t *testing.T) {
 func TestDeleteAll(t *testing.T) {
 	setup()
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	err = store.DeleteAll(context.Background(), "sausheong")
 	if err != nil {
 		t.Errorf("Failed to delete all: %v", err)
@@ -168,6 +180,9 @@ func TestPutImageFile(t *testing.T) {
 	}
 	Register(Thingy{})
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	err = store.Put(context.Background(), "sausheong", "test.png", imageBytes)
 	if err != nil {
 		t.Errorf("Failed to store: %v", err)
@@ -178,6 +193,9 @@ func TestGetImageFile(t *testing.T) {
 	setup()
 	Register(Thingy{})
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	image, err := store.Get(context.Background(), "sausheong", "test.png")
 	if err != nil {
 		t.Errorf("Failed to get: %v", err)
@@ -195,7 +213,9 @@ func TestLargeFile(t *testing.T) {
 	setup()
 	Register(Thingy{})
 	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
-
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
 	// dataBytes, err := os.ReadFile("100MB.bin")
 	// if err != nil {
 	// 	t.Errorf("Failed to read big file: %v", err)
