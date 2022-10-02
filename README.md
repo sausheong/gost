@@ -153,6 +153,45 @@ err = os.WriteFile("test2.png", imageBytes.([]byte), 0644)
 
 Something to note though, all the data is stored in a single file under the same unique ID. If you are planning to store large files, don't store all of them in the same place. Store them under different IDs. Otherwise it's going to be slow everything down.
 
+## Objects
+
+Data in Gost are tied to a unique ID and a key. This allows Gost to provide user-specific data storage where all data related to a specific user (identified by a unique ID) to be stored in a single map. However there are often cases where we need to store data that is common for all users. For example, if we have leaderboard where all users are able to access. This is where objects come in. 
+
+Objects are Gost data that is not identified by a unique ID and a key but by a unique ID only. This single ID is an identifier for the object, instead of being an identifier for a user.
+
+Let's see how this works. Let's say we have a leaderboard, which is just another name for a map of strings to a slice of strings. 
+
+````go
+type Leaderboard map[string][]string
+board := Leaderboard{}
+board["Mona Lisa"] = []string{"Alice", "Bob", "Carol"}
+board["The Scream"] = []string{"Dave"}
+board["The Starry Night"] = []string{"Carol", "Eve"}
+````
+
+Our leaderboard is a ranking of which famous paintings are most liked. We want to allow people to vote for their favorite painting, and also for everyone to view the rankings. 
+
+````go
+Register(Leaderboard{})
+err = store.PutObject(ctx, "leaderboard", board)
+````
+
+As before, we need to register the `Leaderboard` type and simply put the board into Gost, identified by the string "leaderboard".
+
+Getting it out is equally simple.
+
+````go
+obj, err := store.GetObject(ctx, "leaderboard")
+leaderboard := obj.(Leaderboard)
+````
+
+Just get the object back and the assert in back to the `Leaderboard` type.
+
+You can also delete the leaderboard object.
+
+````go
+store.DeleteObject(ctx, "leaderboard")
+````
 
 ## Publishing files to the Internet
 

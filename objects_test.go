@@ -99,3 +99,38 @@ func TestDeleteObject(t *testing.T) {
 	}
 
 }
+
+func TestObjectLeaderboard(t *testing.T) {
+	setup()
+	type Leaderboard map[string][]string
+
+	Register(Leaderboard{})
+	store, err := NewStore(key, secret, endpoint, useSSL, region, bucket)
+	if err != nil {
+		t.Errorf("Failed to initialise a store: %v", err)
+	}
+	board := Leaderboard{}
+	board["Mona Lisa"] = []string{"Alice", "Bob", "Carol"}
+	board["The Scream"] = []string{"Dave"}
+	board["The Starry Night"] = []string{"Carol", "Eve"}
+
+	err = store.PutObject(context.Background(), "leaderboard", board)
+	if err != nil {
+		t.Errorf("Failed to store: %v", err)
+	}
+
+	obj, err := store.GetObject(context.Background(), "leaderboard")
+	if err != nil {
+		t.Errorf("Failed to get: %v", err)
+	}
+	leaderboard := obj.(Leaderboard)
+
+	if len(leaderboard["Mona Lisa"]) != 3 {
+		t.Errorf("Failed to get the right leaderboard")
+	}
+
+	err = store.DeleteObject(context.Background(), "leaderboard")
+	if err != nil {
+		t.Errorf("Failed to delete: %v", err)
+	}
+}
