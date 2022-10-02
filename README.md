@@ -193,6 +193,8 @@ You can also delete the leaderboard object.
 store.DeleteObject(ctx, "leaderboard")
 ````
 
+**!!IMPORTANT!!** The object functions here are not concurrency-safe. You will likely need to add a mutex or use some other techniques to ensure that race conditions don't appear.
+
 ## Publishing files to the Internet
 
 Sometimes you don't want to just store data, you also want the data to be published on the Internet. This is most often used for image files but is also applicable for other types of files like video, PDF, and other documents you want to be directly available. You could of course serve it out from your web application, but why do that when you can use a cloud storage service with a CDN?
